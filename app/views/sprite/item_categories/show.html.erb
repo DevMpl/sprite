@@ -1,0 +1,58 @@
+<div class="span12">
+
+  <h2>お知らせカテゴリ</h2>
+
+  <div class="form-actions">
+    <%= link_to 'お知らせカテゴリ修正', edit_item_category_path, :class => 'btn btn-success' %>
+  </div>
+
+  <div class="widget widget-table action-table">
+    <div class="widget-header">
+      <i class="icon-home"></i>
+      <h3><%= @item_category.name %></h3>
+    </div>
+    <!-- /widget-header -->
+    <div class="widget-content">
+
+      <style type="text/css">
+        .table-bordered img {
+          display: inline-block;
+          margin-right: 20px;
+        }
+      </style>
+
+
+      <table class="table table-bordered" width="100%">
+        <tbody>
+
+          <tr>
+            <th width="200"><%= t_ja('item_category.name') %></th>
+            <td><%= @item_category.name %></td>
+          </tr>
+          <tr>
+            <th><%= t_ja('item_category.slug') %></th>
+            <td><%= @item_category.slug %></td>
+          </tr>
+          <tr>
+            <th><%= t_ja('item_category.note') %></th>
+            <td><%= @item_category.note %></td>
+          </tr>
+          <tr>
+            <th><%= t_ja('item_category.status') %></th>
+            <td><%= @item_category.status %></td>
+          </tr>
+
+        </tbody>
+      </table>
+
+    </div>
+    <!-- /widget-content -->
+  </div>
+</div>
+
+
+<div class="span12">
+  <div class="form-actions">
+    <%= link_to 'お知らせカテゴリ修正', edit_item_category_path, :class => 'btn btn-success' %>
+  </div>
+</div>

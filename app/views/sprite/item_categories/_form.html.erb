@@ -1,0 +1,44 @@
+<script>
+  jQuery(function($){
+    $('#submit').on('click', function(){
+      $(this).closest('form').submit();
+    });
+
+    $('span.radio').replaceWith(function(){
+      return $('<div/>').addClass('field').append($('<div/>').addClass('ui radio checkbox').append($(this).contents()));
+    });
+
+    $('select').addClass('ui search dropdown').dropdown();
+  });
+</script>
+
+<%= f.error_notification %>
+
+<div class="ui blue segment">
+  <div class="ui header">基本情報</div>
+  <div class="two fields">
+    <div class="field">
+      <%= f.input :name %>
+    </div>
+    <div class="field">
+      <%= f.input :slug %>
+    </div>
+    <div class="field">
+      <%= f.input :parent_id, {as: :select, collection: category_name_spacer(Sprite::ItemCategory.children_flatten).map{|c| [c.name, c.id] }, selected: f.object.parent_id, include_blank: true} %>
+    </div>
+  </div>
+  <div class="field">
+    <%= f.input :note, input_html: {rows: 5} %>
+  </div>
+</div>
+
+<div class="ui teal segment">
+  <div class="ui header">掲載情報</div>
+  <div class="inline fields">
+    <%= f.input :status, as: :radio_buttons, collection: statuses.invert, wrapper: false %>
+  </div>
+</div>
+
+<div class="ui center aligned basic segment">
+  <%= link_to raw('<i class="save icon"></i>更新する'), 'javascript:void(0);', class: 'ui huge primary button', id: 'submit' %>
+</div>

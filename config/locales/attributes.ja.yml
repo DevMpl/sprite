@@ -1,0 +1,65 @@
+ja:
+  activerecord:
+    attributes:
+      image:
+        image_content_type: 画像は
+        image_file_size: 画像の
+      user:
+        nickname: ニックネーム
+        email: メールアドレス
+        password: パスワード
+        password_confirmation: パスワード（再入力）
+        remember_me: 次回からパスワード入力を省く
+        sex: 性別
+      note:
+        title: タイトル
+        content: 内容
+        state: 状態
+        published_at: 期限
+      sprite/item:
+        id: ID
+        title: 記事タイトル
+        content_id: チャンネル
+        genre_id: ジャンル
+        categories: タグ
+        url: 記事元URL
+        description: 概要
+        body: 本文
+        free_space1: フリースペース1
+        free_space2: フリースペース2
+        pr_flg: PRかどうか
+        pr_title: PRリンクタイトル
+        pr_url: PRリンクURL
+        address: 住所
+        pub_date: 公開開始日時
+        mod_date: 最終更新日時
+        exp_date: 公開終了日時
+        status: ステータス
+        images: 画像
+        item_category_ids: カテゴリ
+      sprite/item_category:
+        id: ID
+        parent_id: 親カテゴリ
+        name: カテゴリ名
+        slug: スラッグ
+        icon: アイコン
+        note: 備考
+        status: ステータス
+      sprite/page:
+        id: ID
+        parent_id: 親カテゴリ
+        is_directory: ディレクトリかどうか
+        name: カテゴリ名
+        slug: スラッグ
+        icon: アイコン
+        note: 備考
+        status: ステータス
+      sprite/item_location:
+        id: ID
+        city_id: 市区町村
+        address: 住所
+        lat: 緯度
+        lng: 経度
+        sequence: 順番
+        note: 備考
+        status: ステータス

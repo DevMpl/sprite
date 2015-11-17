@@ -1,0 +1,171 @@
+<script>
+  jQuery(function($){
+    $('select[data-role=sort] option:first-child').removeAttr('value');
+    $('select[data-role=sort]').dropdown({
+      onChange: function(val, text, $choice){
+        changeSelect(val, text, $choice);
+      }
+    });
+
+
+    var max = <%= Item::TOP_LIMIT %>;
+
+    function changeSelect(val, text, $choice){
+
+      // 初期状態でコールバック走るの阻止
+      if(val == undefined || $choice.data('value') == '--'){
+        return false;
+      }
+
+      // 順番セレクトでループ
+      $('select[data-role=sort]').each(function(){
+        // 自身のセレクトはスキップ
+        if($(this).index('select[data-role=sort]') == $choice.closest('.compact').find('select[data-role=sort]').index('select[data-role=sort]')){
+          return;
+        }
+
+        // 順番セットされてない行はスキップ
+        if($(this).find('option:selected').val() == '--'){
+          return;
+        }
+
+        // 順番がダブってない行はスキップ
+        if(val != $(this).siblings('.text').text()){
+          return;
+        }
+
+        var next = val + 1;
+        if(max < next){
+          $choice.closest('.compact').find('[data-value=10]').trigger('click');
+          $choice.closest('.compact').find('option').removeAttr('selected').filter('option[value=10]').prop('selected', true).attr('selected', true);
+          // $('select[data-role=sort]').index($choice.closest('.compact').find('select[data-role=sort]').index('select[data-role=sort]')),trigger('click');
+          // $choice.closest('.compact').find('select[data-role=sort] option[value=' + (val - 1) + ']').trigger('change');
+          // $choice.removeClass('active selected').parent().find('.item[data-value=' + (val - 1) + ']').addClass('active selected');
+          // $choice.parent().siblings('.text').text(val -1);
+          // $choice.closest('.compact').find('select[data-role=sort]').find('option').removeAttr('selected').filter('[value=' + (val - 1) + ']').attr('selected', true);
+          alert('すでに設定されています');
+          return false;
+        }
+
+        var $selected = $(this).siblings('.menu').find('.item').removeClass('active selected').filter('[data-value=' + next + ']').addClass('active selected');
+        $(this).siblings('.text').text(next);
+        changeSelect(next, next, $selected);
+
+      });
+
+    }
+
+    $('#clear').on('click', function(){
+      $('select[data-role=sort]').siblings('.menu').find('.item').removeClass('active selected').filter('[data-value=\'\']').addClass('active selected');
+      $('select[data-role=sort]').find('option:selected').val('--');
+      $('select[data-role=sort]').siblings('.text').text('--');
+  });
+
+    $('#clear-top-page-cache').on('click', function(){
+      if(! window.confirm('トップページのキャッシュをクリアします')){
+        return false;
+      }
+
+      $(this).closest('form').submit();
+    })
+
+});
+</script>
+
+<h2 class="ui header">
+  <i class="write icon"></i>
+  記事一覧
+</h2>
+
+<div class="ui breadcrumb">
+  <%= link_to raw('<i class="home icon"></i>'), root_path, class: 'section' %>
+  <i class="right chevron icon divider"></i>
+  <div class="section">記事一覧</div>
+</div>
+
+<% if @items.present?  %>
+<% if defined? @items.current_page %>
+<%= paginate @items, views_prefix: 'mng/' %>
+<% end %>
+
+<script type="text/javascript">
+  jQuery(function($){
+    $('.item_description img').css({'max-width' : 50}).height('auto').parent('p').css({'float' : 'left', 'padding' : 5});
+  });
+
+</script>
+
+<% path = Subdomain::Mng.env_path == "mng" ? "mng/" : "" %>
+
+<div class="ui teal segment">
+  <div class="ui teal header">記事検索</div>
+  <%= simple_form_for('item', url: item_positions_path, class: 'ui form', method: :get) do |f| %>
+
+  <div class="ui action input">
+    <%= text_field_tag(:title_cont, nil, placeholder: '検索ワードを入力してください') %>
+    <button class="ui primary button" id="search">検索</button>
+  </div>
+  <% end %>
+
+  <%= simple_form_for('item', url: dashboard_clear_page_cache_path, method: :delete) do |f| %>
+    <div class="ui basic center aligned segment">
+      <div class="ui huge purple button" data-role="change-status" id="clear-top-page-cache"><i class="refresh icon"></i>トップページキャッシュをクリア</div>
+    </div>
+  <% end %>
+</div>
+
+<%= simple_form_for('item', url: item_update_positions_path, method: :put) do |f| %>
+
+<% if @searched.present? %>
+<table class="ui celled padded table">
+  <thead>
+    <tr>
+      <th class="center aligned"><%= t_ja('item.sequence') %></th>
+      <th class="center aligned"><%= t_ja('item.id') %></th>
+      <th class="center aligned"><%= t_ja('item.content_id') %></th>
+      <th class="center aligned" nowrap="nowrap"><%= t_ja('item.status') %></th>
+      <th nowrap="nowrap"><%= t_ja('item.title') %></th>
+      <% if false %>
+      <th class="center aligned" nowrap="nowrap">時間変更</th>
+      <% end %>
+    </tr>
+  </thead>
+  <tbody>
+    <% @searched.each do |item| %>
+    <tr>
+      <%= render partial: 'positions', locals: { item: item } %>
+    </tr>
+    <% end %>
+  </tbody>
+</table>
+<% end %>
+
+<table class="ui celled padded table">
+  <thead>
+    <tr>
+      <th class="center aligned"><%= t_ja('item.sequence') %></th>
+      <th class="center aligned" nowrap="nowrap">パートナー</th>
+      <th class="center aligned" nowrap="nowrap"><%= t_ja('item.images') %></th>
+      <th nowrap="nowrap"><%= t_ja('item.title') %></th>
+      <th nowrap="nowrap">公開日</th>
+      <th class="center aligned" nowrap="nowrap"><%= t_ja('item.status') %></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @items.each do |item| %>
+    <tr>
+      <%= render partial: 'positions', locals: { item: item } %>
+    </tr>
+    <% end %>
+  </table>
+  <%= submit_tag '順番を更新', class: 'ui primary button' %>
+  <%= button_tag '順番をクリア', class: 'ui yellow button', id: 'clear', type: 'button' %>
+  <% end %>
+
+  <% else %>
+  <div class="ui message info">
+    記事はありません
+  </div>
+  <% end %>
+
+  <br>

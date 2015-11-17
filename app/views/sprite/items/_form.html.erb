@@ -1,0 +1,240 @@
+<% content_for :inline_js do %>
+<script src='http://maps.google.com/maps/api/js?sensor=true_or_false'></script>
+
+<script>
+  jQuery(function($){
+    $('#submit').on('click', function(){
+      $(this).closest('form').submit();
+    });
+
+    $('select.dropdown').dropdown();
+    $('[id$=date]').datetimepicker({
+      lang: 'ja',
+      step: 10,
+      format: 'Y-m-d H:i:00'
+    });
+
+    var $checkboxes = $('.checkboxes');
+    $checkboxes.find('label').css('margin-right', 10);
+
+    $('span.radio').replaceWith(function(){
+      return $('<div/>').addClass('field').append($('<div/>').addClass('ui radio checkbox').append($(this).contents()));
+    });
+
+    var lat = '<%= @item.item_location.lat %>' || 33.590622;
+    var lng = '<%= @item.item_location.lng %>' || 130.401639;
+
+    // $('[id$=city_id]').dropdown({placeholder: false, search: true});
+    $('[id$=city_id]').dropdown();
+
+    $('#map').height(400);
+
+    var replaceMarker = function(map, position){
+
+      if($('#map').data('marker')){
+        $('#map').data('marker').setMap(null);
+      }
+      var marker = new google.maps.Marker({
+        position: position,
+        map: map,
+        draggable: true
+      });
+
+      google.maps.event.addListener(marker, 'dragend', function(e){
+        var position = e.latLng;
+        map.panTo(position);
+        replaceMarker(map, position);
+      });
+
+      $('#map').data('marker', marker);
+      $('[id$=lat]').val(position.lat());
+      $('[id$=lng]').val(position.lng());
+
+    }
+
+    var position = new google.maps.LatLng(lat, lng);
+    var mapOptions = {
+      zoom: 16,
+      center: position,
+      scrollwheel: false
+    }
+    var map = new google.maps.Map(document.getElementById('map'), mapOptions);
+
+    map.panTo(position);
+    replaceMarker(map, position);
+
+    $('#geo').on('click', function(){
+      var geocoder = new google.maps.Geocoder();
+      geocoder.geocode({
+        'address': $('[id$=city_id] option:selected').text() + $('[id$=address]').val(),
+        'region': 'jp'
+      }, function(results, status){
+        if(status == google.maps.GeocoderStatus.OK){
+          var position = results[0].geometry.location;
+          map.panTo(position);
+          replaceMarker(map, position);
+        }
+      });
+    });
+
+  });
+</script>
+<% end %>
+
+<% if @item.errors.any? %>
+<div class="ui error message">
+  エラーがあります。確認してください。
+</div>
+<% end %>
+
+<div class="ui hidden divider"></div>
+
+<div class="form-inputs">
+  <div class="ui red segment">
+    <div class="ui red header">基本情報</div>
+		
+    <div class="fields">
+      <div class="thirteen wide field">
+        <%= f.input :title %>
+      </div>
+    </div>
+		
+		
+    <div class="fields">
+      <div class="thirteen wide field">
+        <%= f.input :url %>
+      </div>
+
+    </div>
+
+    <div class="field">
+      <%= f.input :description %>
+    </div>
+    <div class="field">
+      <%= f.label :item_category_ids %>
+      <div class="ui checkboxes segment">
+        <%= collection_check_boxes(:item, :content_ids, Sprite::ItemCategory.active, :id, :name) do |s| %>
+          <div class="ui checkbox"><%= s.check_box + s.label { s.text } %></div>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="field">
+      <%= f.input :body, as: :ckeditor, input_html: {ckeditor: {height: 400}} %>
+    </div>
+
+    <div class="two fields">
+      <div class="field">
+        <%= f.input :free_space1, as: :ckeditor, input_html: {ckeditor: {height: 200}} %>
+      </div>
+      <div class="field">
+        <%= f.input :free_space2, as: :ckeditor, input_html: {ckeditor: {height: 200}} %>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="ui blue segment">
+    <div class="ui blue header">位置情報</div>
+    <div class="fields">
+      <%= f.fields_for :item_location do |ilf| %>
+        <div class="four wide field">
+          <%= ilf.input :city_id, as: :select, collection: Sprite::City.all.map{|c| ["#{c.name}（#{c.prefecture.name}）", c.id]}, include_blank: '--', input_html: {class: 'ui search compact'}, label: t_ja('item_location.city_id') %>
+        </div>
+        <div class="twelve wide field">
+          <%= ilf.input :address, label: t_ja('item_location.address') do %>
+          <div class="ui action fluid input">
+            <%= ilf.text_field :address %>
+            <button class="ui green right labeled icon button" type="button" id="geo"><i class="search icon"></i>住所から検索</button>
+          </div>
+          <% end %>
+          <%= ilf.input :lat, as: :hidden %>
+          <%= ilf.input :lng, as: :hidden %>
+        </div>
+      <% end %>
+    </div>
+    <div class="fields">
+      <div class="sixteen wide field">
+        <div id="map" class="ui segment"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ui purple segment">
+    <div class="ui purple header">PRリンク情報</div>
+    <div class="fields">
+      <div class="ui wide two field">
+        <div class="ui checkbox">
+          <%= f.input :pr_flg, label: false do %>
+          <%= f.check_box :pr_flg %>
+          <%= f.label :pr_flg, 'PR情報'  %>
+          <% end %>
+        </div>
+      </div>
+      <div class="ui wide seven field">
+        <%= f.input :pr_title %>
+      </div>
+      <div class="ui wide seven field">
+        <%= f.input :pr_url %>
+      </div>
+    </div>
+  </div>
+
+  <% if false %>
+  <div class="ui blue segment">
+    <div class="ten wide column">
+      <div class="ui blue header">位置情報</div>
+      <div class="fields">
+        <div class="eight wide field">
+          <%= f.input :address %>
+        </div>
+        <div class="four wide field">
+          <%= f.input :lat %>
+        </div>
+        <div class="four wide field">
+          <%= f.input :lng %>
+        </div>
+      </div>
+    </div>
+  </div>
+  <% end %>
+
+  <div class="ui teal segment">
+    <div class="ui teal header">掲載情報</div>
+    <div class="three column fields">
+      <div class="field">
+        <%= f.input :pub_date do %>
+        <%= f.text_field :pub_date, value: (f.object.pub_date.blank? ? '' : f.object.pub_date.strftime('%Y-%m-%d %H:%M:00')) %>
+        <% end %>
+      </div>
+			
+      <div class="field">
+        <%= f.input :exp_date do %>
+        <%= f.text_field :exp_date, value: (f.object.exp_date.blank? ? '' : f.object.exp_date.strftime('%Y-%m-%d %H:%M:00')) %>
+        <% end %>
+      </div>
+
+      <div class="field">
+        <%= f.input :mod_date do %>
+        <%= f.text_field :mod_date, value: (f.object.mod_date.blank? ? '' : f.object.mod_date.strftime('%Y-%m-%d %H:%M:00')) %>
+        <% end %>
+      </div>
+
+    </div>
+	
+	<div class="fields">
+		
+    <div class="field">
+      <%= f.input :status do %>
+      <%= f.select :status, statuses.invert, {include_blank: '--'}, {class: 'ui fluid dropdown'} %>
+      <% end %>
+    </div>
+		
+	</div>
+
+
+  </div>
+
+  <div class="form-actions">
+    <%= f.button :submit %>
+  </div>

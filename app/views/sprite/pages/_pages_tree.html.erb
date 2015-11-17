@@ -1,0 +1,14 @@
+<ul id="main_tree" class="filetree">
+  <% pages.each do |page, children| %>
+  <li>
+    <span class="<%= page.is_directory? ? 'folder' : 'file' %>">
+      &nbsp;<%= link_to page.name, edit_page_path(page) %>
+      <% unless page.is_root? %>
+        <%= page.first? ? '' : link_to(raw('<i class="up arrow icon"></i>'), move_higher_page_path(page), confirm: '▲ 優先順を変更してよろしいですか？') %>
+        <%= page.last? ? '' : link_to(raw('<i class="down arrow icon"></i>'), move_lower_page_path(page), confirm: '▼ 優先順を変更してよろしいですか？') %>
+      <% end %>
+      <%= render partial: 'pages_tree', locals: {pages: children} if children.present? %>
+    </span>
+  </li>
+  <% end %>
+</ul>

@@ -1,0 +1,19 @@
+<h1 class="ui header"><i class="cube icon"></i><div class="content">ページ 編集</div></h1>
+
+<div class="ui breadcrumb">
+  <div class="section"><%= link_to(raw('<i class="home icon"></i>'), root_path) %></div>
+  <div class="divider"> / </div>
+  <div class="section">ページ 編集</div>
+</div>
+
+<div class="ui hidden divider"></div>
+
+<%= render :partial => 'sub_menu' %>
+
+<div class="ui warning message">
+  <abbr title="required">*</abbr>は必須入力項目です。全てご記入いただかないと登録できませんのでご注意ください。
+</div>
+
+<%= simple_form_for(@page, :url => pages_path) do |f| %>
+<%= render partial: 'form', locals: { f: f } %>
+<% end %>

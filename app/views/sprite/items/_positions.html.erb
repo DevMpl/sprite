@@ -1,0 +1,23 @@
+<td nowrap="nowrap">
+  <%= select_tag("positions[#{item.id}]", options_for_select([*1..Item::TOP_LIMIT], ({selected: item.item_position.sequence} unless item.item_position.nil?)), class: 'compact', include_blank: '--', 'data-role' => 'sort') %>
+</td>
+
+<td nowrap="nowrap" class="center aligned<%= ' disabled' if item.status == 'private' %>">
+  <%= image_tag(item.content.content_logo_image.image.url(:thumb_mini), class: 'ui middle aligned image', width: 60, alt: item.content.title) if item.content.content_logo_image.present? %>
+</td>
+
+<td class="center aligned"><%= link_to raw('<i class="large camera icon"></i>'), item_images_list_path(item) %></td>
+<td id="description">
+  <%= link_to item.title, edit_item_path(item) %> <% unless item.is_edit.zero? %><div class="ui tiny orange label">記事修正済</div><% end %><br />
+
+  <% if item.categories.present? %>
+  <div class="ui mini label"><%= item.categories %></div>
+  <% end %>
+</td>
+<td nowrap="nowrap" class="center aligned">
+  <%= item.pub_date.strftime('%-m/%-d') unless item.pub_date.nil? %>
+</td>
+<% _class = (item.status == 'public')? 'positive' : 'negative' %>
+<td width="15%" class="center aligned change_status <%= _class %>">
+  <%= statuses[item.status] %>
+</td>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="robots" content="noindex,nofollow,noarchive" />
+  <title>SPRITE::記事管理</title>
+  <%= stylesheet_link_tag    "sprite/application", media: "all" %>
+  <%= javascript_include_tag "sprite/application" %>
+  <%= csrf_meta_tags %>
+<%= yield :inline_css %>
+<%= yield :inline_js %>
+</head>
+
+
+<body>
+  <script>
+    jQuery(function($){
+
+      var prefix = '<%#= Subdomain::Mng.env_path == "mng" ? "/mng" : "" %>';
+
+      var path = location.pathname;
+      var _path = prefix ? path.replace(prefix, '') : path;
+
+      var content = _path.split("/")[1];
+
+      var a = content ? "a[href^='" + prefix + "/" + content + "']" : "a[href='" + prefix + "']";
+
+      $('#global-menu').find(a).addClass('active');
+
+      $('.dropdown').dropdown();
+
+      $('.attached.button').sidebar('setting', 'transition', 'overlay').on('click', function(){
+        $('.left.sidebar').sidebar('toggle');
+      });
+
+    });
+  </script>
+  <style>
+    #main{
+      width: 80%;
+      margin: 0 auto;
+    }
+
+    #message {
+      padding-top: 60px;
+      height: 120px;
+    }
+    label abbr {
+      color: #a94442 !important;
+      font-weight: bold;
+    }
+    .help-inline {
+      color: #a94442;
+    }
+
+    .fixed.button{
+      top: 60px;
+    }
+
+    .main .container{
+      width: 80%;
+      margin: 0 auto;
+    }
+
+    .ui.form .error.message{
+      display: block !important;
+    }
+
+    .ui.checkbox label{
+      cursor: pointer;
+    }
+
+  </style>
+
+  <div class="ui fixed inverted main menu">
+    <div class="container">
+      <div class="title item">
+        <%= link_to "cola", '/' %>
+      </div>
+      <div class="right menu">
+        <div class="ui dropdown item">
+          メニュー
+          <i class="dropdown icon"></i>
+          <div class="menu">
+            <%#= link_to("ログアウト", destroy_user_session_path, class: 'item', method: :delete, data: { confirm: 'ログアウトしてよろしいですか？' }) %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ui left vertical inverted sidebar menu">
+		
+		<%= link_to raw('<i class="home icon"></i>HOME'), '/', {class: 'item'} %>
+		<%= link_to raw('<i class="write icon"></i>記事'), items_path, {class: 'item'} %>
+		<%= link_to raw('<i class="tags icon"></i>カテゴリ'), item_categories_path, {class: 'item'} %>
+		<%= link_to raw('<i class="cube icon"></i>固定ページ'), pages_path, {class: 'item'} %>
+		<%#= link_to raw('<i class="user icon"></i>ライター'), writers_path, {class: 'item'} %>
+		<%#= link_to raw('<i class="flag icon"></i>チャンネル'), contents_path, {class: 'item'} %>
+		
+    <%#=
+      if current_user.present?
+        case current_user.role.name
+        when 'admin'
+          render :partial => 'mng/layouts/admin_menu'
+        when 'regional_admin'
+          render :partial => 'mng/layouts/regional_admin_menu'
+        when 'company'
+          render :partial => 'mng/layouts/company_menu'
+        else
+        end
+      end
+    %>
+  </div>
+
+  <div class="ui black big launch right attached fixed  button">
+    <i class="content icon"></i>
+  </div>
+
+  <div class="ui centered grid column" id="main">
+    <div class="ui sixteen wide column">
+      <div id="container">
+        <div id="message">
+          <% flash.each do |type, message| -%>
+          <div class="ui <%= get_message_type(type) %> message">
+            <strong><%= message %></strong>
+          </div>
+          <% end %>
+        </div>
+        <%= yield %>
+      </div>
+    </div>
+  </div>
+
+</body>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-58535961-2', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</html>

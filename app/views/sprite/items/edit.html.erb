@@ -1,0 +1,16 @@
+<h2 class="ui header">
+  <i class="write icon"></i>
+  <div class="content">記事「<%= @item.title %>」編集</div>
+</h2>
+
+<div class="ui breadcrumb">
+  <%= link_to raw('<i class="home icon"></i>'), root_path, class: 'section' %>
+  <i class="right chevron icon divider"></i>
+  <%= link_to raw('記事一覧'), items_path, class: 'section' %>
+  <i class="right chevron icon divider"></i>
+  <div class="section">記事「<%= @item.title %>」編集</div>
+</div>
+
+<%= simple_form_for(@item, url: item_path) do |f| %>
+  <%= render partial: 'form', locals: { f: f } %>
+<% end %>

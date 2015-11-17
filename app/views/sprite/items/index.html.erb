@@ -1,0 +1,113 @@
+<script>
+  jQuery(function($){
+    $('.ui.dropdown').on('change', function(){
+      var status = $(this).find('option:selected').val();
+      $(this).closest('td').attr('class', 'center aligned change_status ' + (status == 'public' ? 'positive' : 'negative'));
+    });
+
+    $('#search [type=reset]').on('click', function(){
+      var $target = $(this).closest('form').find('.fields');
+      $target.find('input').attr('value', '');
+
+      $('#q_status_eq').dropdown('clear').dropdown('set text', '--');
+    });
+
+    $('[data-role=change-status]').on('click', function(){
+      $(this).closest('form').submit();
+    });
+
+    $('select').addClass('ui fluid dropdown').dropdown({placeholder: true});
+
+  });
+</script>
+
+<h2 class="ui header">
+  <i class="write icon"></i>
+  記事一覧
+</h2>
+
+<div class="ui breadcrumb">
+  <%= link_to raw('<i class="home icon"></i>'), '/', class: 'section' %>
+  <i class="right chevron icon divider"></i>
+  <div class="section">記事一覧</div>
+</div>
+
+<script type="text/javascript">
+  jQuery(function($){
+    $('.item_description img').css({'max-width' : 50}).height('auto').parent('p').css({'float' : 'left', 'padding' : 5});
+  });
+
+</script>
+
+<div class="ui teal segment" id="search">
+  <div class="ui teal header">記事検索</div>
+  <%= search_form_for @q, {url: items_path, class: 'ui form'} do |f| %>
+
+  <div class="fields">
+    <div class="twelve wide field">
+      <label for="q_title_or_body_cont">テキスト検索</label>
+      <%= f.search_field :title_or_body_cont, type: 'text', placeholder: '記事タイトル、本文を検索します' %>
+    </div>
+
+    <div class="four wide field">
+      <%= f.label :status %>
+      <%= f.select :status_eq, statuses.invert, {include_blank: '--'} %>
+    </div>
+
+  </div>
+
+  <%= f.submit '検索', class: 'ui primary button' %>
+  <%= button_tag 'クリア', class: 'ui yellow button', type: :reset %>
+  <% end %>
+</div>
+
+<% if @items.respond_to?(:current_page) %>
+  <%= paginate @items %>
+<% end %>
+
+<div class="ui hidden divider"></div>
+<% if @items.present?  %>
+
+<%= simple_form_for('Item', url: item_change_data_path, method: :post) do |f| %>
+  <div class="ui basic center aligned segment">
+    <div class="ui huge green button" data-role="change-status"><i class="save icon"></i>ステータスを変更</div>
+  </div>
+
+  <table class="ui celled padded table">
+    <thead>
+      <tr>
+        <th class="center aligned" nowrap="nowrap"><%= t_ja('item.images') %></th>
+        <th nowrap="nowrap"><%= t_ja('item.title') %></th>
+        <th nowrap="nowrap">公開日</th>
+        <th class="center aligned" nowrap="nowrap"><%= t_ja('item.status') %></th>
+        <th class="center aligned">詳細</th>
+        <th class="center aligned" nowrap="nowrap">プレビュー</th>
+        <th class="center aligned">編集</th>
+        <th class="center aligned" nowrap="nowrap">最新</th>
+        <th class="center aligned" nowrap="nowrap">削除</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @items.each do |item| %>
+      <tr>
+        <%= render partial: 'index', locals: { item: item } %>
+      </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <div class="ui basic center aligned segment">
+    <div class="ui huge green button" data-role="change-status"><i class="save icon"></i>ステータスを変更</div>
+  </div>
+
+<% end %>
+<% else %>
+<div class="ui message info">
+  記事はありません
+</div>
+<% end %>
+
+<div class="ui hidden divider"></div>
+<div class="ui hidden divider"></div>
+
+<%= link_to '新規登録', new_item_path, class: 'ui primary button' %>

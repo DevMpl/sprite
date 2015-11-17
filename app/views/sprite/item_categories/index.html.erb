@@ -1,0 +1,73 @@
+<script>
+  jQuery(function ($) {
+    $("#sub_tree").treeview();
+    $("#main_tree").treeview({animated: 100, collapsed: true});
+  })
+</script>
+<h1 class="ui header"><i class="tag icon"></i><div class="content">記事カテゴリ一覧</div></h1>
+
+<div class="ui breadcrumb">
+  <div class="section"><%= link_to(raw('<i class="home icon"></i>'), root_path) %></div>
+  <div class="divider"> / </div>
+  <div class="section">記事カテゴリ一覧</div>
+</div>
+
+<div class="ui hidden divider"></div>
+
+<%= render :partial => 'sub_menu' %>
+
+<% if @item_categories.present? %>
+
+<div class="ui hidden divider"></div>
+<div class="ui grid">
+  <div class="eleven wide column">
+    <table class="ui celled table">
+
+      <thead>
+        <tr>
+          <th width="5%">ID</th>
+          <th width="35%"><%= t_ja('item_category.name') %></th>
+          <th width="20%"><%= t_ja('item_category.slug') %></th>
+          <th width="20%" class="center aligned"><%= t_ja('item_category.status') %></th>
+          <th width="6%" class="center aligned">編集</th>
+          <th width="6%" class="center aligned">削除</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @item_categories.each do |item_category| %>
+        <tr>
+          <td class="center aligned"><%= item_category.id %></td>
+          <td><%= item_category.name %></td>
+          <td><% if item_category.slug.present? %><div class="ui brown tag label"><%= item_category.slug %></div><% end %></td>
+          <td class="center aligned">
+            <%= status_label(item_category.status) %>
+          </td>
+          <td class="center aligned"><%= link_to raw('<i class="green large edit link icon"></i>'), edit_item_category_path(item_category) %></td>
+          <td class="center aligned">
+            <% if item_category.deletable? %>
+              <%= link_to raw('<i class="red large remove link icon"></i>'), item_category_path(item_category), method: :delete, data: { confirm: t("message.destroy_confirm") } %>
+            <% else %>
+              <i class="disable large remove icon"></i>
+            <% end %>
+          </td>
+        </tr>
+        <% end %>
+      </tbody>
+
+    </table>
+  </div>
+  <div class="five wide column">
+    <div class="ui teal segment">
+      <div class="ui teal header"><i class="tags icon"></i>カテゴリーツリー</div>
+      <% cache "category_tree_all" do %>
+        <%= render partial: 'categories_tree', locals: {categories: @item_categories.arrange(order: :position)} %>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<% else %>
+<div class="ui message info">
+  コンテンツはありません
+</div>
+<% end %>

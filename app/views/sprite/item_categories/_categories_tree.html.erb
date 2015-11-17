@@ -1,0 +1,14 @@
+<ul id="main_tree" class="treeview">
+  <% categories.each do |category, children| %>
+  <li>
+    &nbsp;<i class="teal tag icon"></i>
+    <%= link_to "#{category.position}. #{category.name}", edit_item_category_path(category) %>
+    <% unless category.is_root? %>
+      <%= category.first? ? '' : link_to(raw('<i class="up arrow icon"></i>'), move_higher_category_path(category), confirm: '▲ 優先順を変更してよろしいですか？') %>
+      <%= category.last? ? '' : link_to(raw('<i class="down arrow icon"></i>'), move_lower_category_path(category), confirm: '▼ 優先順を変更してよろしいですか？') %>
+    <% end %>
+
+    <%= render partial: 'categories_tree', locals: {categories: children} if children.present? %>
+  </li>
+  <% end %>
+</ul>

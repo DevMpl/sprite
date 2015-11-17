@@ -1,0 +1,78 @@
+<p id="notice"><%= notice %></p>
+
+<h2 class="ui header">
+  <i class="pencil icon"></i>
+  <div class="content">記事「<%= @item.title %>」詳細</div>
+</h2>
+
+<div class="ui breadcrumb">
+  <%= link_to raw('<i class="home icon"></i>'), root_path, class: 'section' %>
+  <i class="right chevron icon divider"></i>
+  <%= link_to raw('記事一覧'), items_path, class: 'section' %>
+  <i class="right chevron icon divider"></i>
+  <div class="section">記事「<%= @item.title %>」詳細</div>
+</div>
+
+<table class="ui definition table">
+  <tbody>
+
+    <tr>
+      <td nowrap="nowrap"><%= t_ja('item.url') %></td>
+      <td><%= link_to @item.url, @item.url, tareget: '_blank' %></td>
+    </tr>
+
+    <tr>
+      <td nowrap="nowrap"><%= t_ja('item.description') %></td>
+      <td><%= @item.description.html_safe %></td>
+    </tr>
+
+    <tr>
+      <td nowrap="nowrap"><%= t_ja('item.body') %></td>
+      <td><%= raw @item.body_view %></td>
+
+
+    </tr>
+
+    <tr>
+      <td nowrap="nowrap">画像一覧</td>
+      <td>
+				<% @item.item_images.each do |image| %>
+					<%= image_tag image.image.url %>
+				<% end %>
+			</td>
+
+    </tr>
+
+    <tr>
+      <td>ページ</td>
+      <td><iframe src="<%= @item.url %>" width="950px" height="900px"></iframe></td>
+    </tr>
+
+    <tr>
+      <td>外部サービス用XML</td>
+      <td>
+        <% @item.item_services.each do |item_service| %>
+          <%= image_tag("/images/services/#{item_service.service.slug}.png", class: "ui middle aligned mini image") %><%= item_service.service.name %>
+        <% end %>
+      </td>
+    </tr>
+
+    <tr>
+      <td nowrap="nowrap"><%= t_ja('item.address') %></td>
+      <td><%= @item.address %></td>
+    </tr>
+
+    <tr>
+      <td nowrap="nowrap"><%= t_ja('item.lat') %></td>
+      <td><%= @item.lat %></td>
+    </tr>
+
+    <tr>
+      <td nowrap="nowrap"><%= t_ja('item.lng') %></td>
+      <td><%= @item.lng %></td>
+    </tr>
+
+  </tbody>
+</table>
+
+<%= link_to '戻る', items_path, class:'ui large button' %><%= link_to '編集', edit_item_path(@item), class:'ui primary large button' %>

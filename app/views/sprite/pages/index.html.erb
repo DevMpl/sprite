@@ -1,0 +1,73 @@
+<script>
+  jQuery(function ($) {
+    $("#sub_tree").treeview();
+    $("#main_tree").treeview({animated: 100, collapsed: true});
+  })
+</script>
+<h1 class="ui header"><i class="tag icon"></i><div class="content">記事カテゴリ一覧</div></h1>
+
+<div class="ui breadcrumb">
+  <div class="section"><%= link_to(raw('<i class="home icon"></i>'), root_path) %></div>
+  <div class="divider"> / </div>
+  <div class="section">記事カテゴリ一覧</div>
+</div>
+
+<div class="ui hidden divider"></div>
+
+<%= render :partial => 'sub_menu' %>
+
+<% if @pages.present? %>
+
+<div class="ui hidden divider"></div>
+<div class="ui grid">
+  <div class="eleven wide column">
+    <table class="ui celled table">
+
+      <thead>
+        <tr>
+          <th width="5%">ID</th>
+          <th width="35%"><%= t_ja('page.name') %></th>
+          <th width="20%"><%= t_ja('page.slug') %></th>
+          <th width="20%" class="center aligned"><%= t_ja('page.status') %></th>
+          <th width="6%" class="center aligned">編集</th>
+          <th width="6%" class="center aligned">削除</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @pages.each do |page| %>
+        <tr>
+          <td class="center aligned"><%= page.id %></td>
+          <td><%= page.name %></td>
+          <td><% if page.slug.present? %><div class="ui brown tag label"><%= page.slug %></div><% end %></td>
+          <td class="center aligned">
+            <%= status_label(page.status) %>
+          </td>
+          <td class="center aligned"><%= link_to raw('<i class="green large edit link icon"></i>'), edit_page_path(page) %></td>
+          <td class="center aligned">
+            <% if page.deletable? %>
+              <%= link_to raw('<i class="red large remove link icon"></i>'), page_path(page), method: :delete, data: { confirm: t("message.destroy_confirm") } %>
+            <% else %>
+              <i class="disable large remove icon"></i>
+            <% end %>
+          </td>
+        </tr>
+        <% end %>
+      </tbody>
+
+    </table>
+  </div>
+  <div class="five wide column">
+    <div class="ui teal segment">
+      <div class="ui teal header"><i class="cubes icon"></i>固定ページ</div>
+      <% cache "page_tree_all" do %>
+        <%= render partial: 'pages_tree', locals: {pages: @pages.arrange(order: :position)} %>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<% else %>
+<div class="ui message info">
+  コンテンツはありません
+</div>
+<% end %>

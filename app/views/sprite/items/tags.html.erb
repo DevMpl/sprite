@@ -1,0 +1,40 @@
+<script>
+  jQuery(function ($) {
+    $('#loader').find('p').height(200).end().hide();
+    $(document).on('click', '.label', function(){
+      // $('#items').children().toggle().end().load('tag/' + $(this).text() + ' #items', function () {
+      $('#items').load('tag/' + $(this).text() + ' #items', function () {
+        // $(this).toggle();
+      });
+    })
+  });
+</script>
+
+<h2 class="ui header">
+  <i class="tags icon"></i>
+  タグ一覧
+</h2>
+
+<div class="ui breadcrumb">
+  <%= link_to raw('<i class="home icon"></i>'), root_path, class: 'section' %>
+  <i class="right chevron icon divider"></i>
+  <div class="section">タグ一覧</div>
+</div>
+
+<div class="ui segment">
+  <% @tags.each do |tag| %>
+  <div class="ui massive label"><%= link_to tag, 'javascript:void(0);' %></div>
+  <% end %>
+</div>
+
+<div id="items">
+  <div id="loader">
+    <div class="ui segment">
+      <div class="ui active dimmer">
+        <div class="ui large text loader">Loading</div>
+      </div>
+      <p></p>
+    </div>
+  </div>
+  <div id="items"></div>
+</div>

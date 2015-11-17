@@ -1,0 +1,26 @@
+<% if false %><td class="center aligned"><%=  item.status == 'public' ? raw('<i class="blue check square icon"></i>') : raw('<i class="disabled minus square icon"></i>') %></td><% end %>
+<td class="center aligned"><%#= link_to raw('<i class="large camera icon"></i>'), item_images_list_path(item) %></td>
+<td class="item_description">
+  <%= link_to item.title, edit_item_path(item) %>
+
+  <div class="ui basic segment">
+    <div class="checkboxes">
+      <%= collection_check_boxes(:item, :content_ids, Sprite::ItemCategory.active, :id, :name, include_hidden: false) do |s| %>
+        <div class="ui checkbox"><%= check_box_tag("items[#{item.id}][content_ids][]", s.object.id, item.content_ids.include?(s.object.id), id: "item_#{item.id}_#{s.object.id}") + s.label(for: "item_#{item.id}_#{s.object.id}") { s.text } %></div>
+      <% end %>
+    </div>
+  </div>
+</td>
+<td nowrap="nowrap" class="center aligned">
+  <%= item.pub_date.strftime('%-m/%-d') unless item.pub_date.nil? %>
+</td>
+<% _class = (item.status == 'public')? 'positive' : 'negative' %>
+<td width="15%" class="center aligned change_status <%= _class %>">
+  <%= select_tag('status', options_for_select(statuses.invert, selected: item.status), class: 'ui compact dropdown', name: "items[#{item.id}][status]") %>
+</td>
+
+<td class="center aligned"><%= link_to raw('<i class="black large browser icon link icon"></i>'), item_path(item) %></td>
+<td class="center aligned"><%#= link_to raw('<i class="blue large search icon link icon"></i>'), items_preview_path(item), target: '_blank' %></td>
+<td class="center aligned"><%= link_to raw('<i class="green large edit icon link icon"></i>'), edit_item_path(item) %></td>
+<td class="center aligned"><%= link_to raw('<i class="purple large refresh icon link icon"></i>'), item_clear_page_cache_path(item), method: :delete, data: { confirm: 'ページキャッシュをクリアします' } %></td>
+<td class="center aligned"><%= link_to raw('<i class="red large remove icon link icon"></i>'), item_path(item), method: :delete, data: { confirm: t('message.destroy_confirm') } %></td>

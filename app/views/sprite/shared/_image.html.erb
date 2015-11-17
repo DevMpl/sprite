@@ -1,0 +1,11 @@
+<%- image = f.object -%>
+<div class="wrap_image">
+    <%- if image && image.image? -%>
+      <div>
+        <%= image_tag image.image_url.to_s %>
+      </div>
+      <label><%= f.check_box :remove_image, class: 'ui checkbox' %>削除</label>
+      <%= f.hidden_field :image_cache if image.image_cache %>
+    <%- end -%>
+    <%= f.input :image, as: :file, label: false %>
+</div>

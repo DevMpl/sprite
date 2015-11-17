@@ -1,0 +1,30 @@
+<div id="items">
+  <table class="ui celled padded table">
+    <thead>
+      <tr>
+        <th class="center aligned"><%= t_ja('item.id') %></th>
+        <th class="center aligned"><%= t_ja('item.content_id') %></th>
+        <th class="center aligned" nowrap="nowrap"><%= t_ja('item.status') %></th>
+        <th class="center aligned" nowrap="nowrap"><%= t_ja('item.images') %></th>
+        <th nowrap="nowrap"><%= t_ja('item.title') %> <%= t_ja('item.genre_id') %> / <%= t_ja('item.categories') %></th>
+        <th class="center aligned">詳細</th>
+        <th class="center aligned">編集</th>
+        <th class="center aligned">削除</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @items.each do |item| %>
+      <tr>
+        <%= render partial: 'index', locals: { item: item } %>
+      </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <% else %>
+
+  <% if false %>
+  <div class="ui message info">
+    記事はありません
+  </div>
+  <% end %>
+</div>
